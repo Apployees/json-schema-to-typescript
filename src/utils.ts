@@ -1,6 +1,4 @@
-import {whiteBright} from 'cli-color'
 import {deburr, isPlainObject, mapValues, trim, upperFirst} from 'lodash'
-import {basename, dirname, extname, join, normalize, sep} from 'path'
 import {JSONSchema} from './types/JSONSchema'
 
 // TODO: pull out into a separate package
@@ -148,14 +146,20 @@ export function traverse(
  * Eg. `foo/bar/baz.json` => `baz`
  */
 export function justName(filename = ''): string {
-  return stripExtension(basename(filename))
-}
+  let x = filename.lastIndexOf("/")
+  if (x >= 0) {
+    filename = filename.substring(x + 1);
+  }
+  x = filename.lastIndexOf("\\")
+  if (x >= 0) {
+    filename = filename.substring(x + 1);
+  }
+  x = filename.indexOf(".")
+  if (x >= 0) {
+    filename = filename.substring(0, x);
+  }
 
-/**
- * Avoid appending "js" to top-level unnamed schemas
- */
-export function stripExtension(filename: string): string {
-  return filename.replace(extname(filename), '')
+  return filename;
 }
 
 /**
@@ -207,12 +211,12 @@ export function generateName(from: string, usedNames: Set<string>) {
 }
 
 export function error(...messages: any[]) {
-  console.error(whiteBright.bgRedBright('error'), ...messages)
+  console.error('error', ...messages)
 }
 
 export function log(...messages: any[]) {
   if (process.env.VERBOSE) {
-    console.info(whiteBright.bgCyan('debug'), ...messages)
+    console.info('debug', ...messages)
   }
 }
 
@@ -229,23 +233,4 @@ export function escapeBlockComment(schema: JSONSchema) {
       schema[key] = schema[key]!.replace(/\*\//g, replacer)
     }
   }
-}
-
-/*
-the following logic determines the out path by comparing the in path to the users specified out path.
-For example, if input directory MultiSchema looks like:
-  MultiSchema/foo/a.json
-  MultiSchema/bar/fuzz/c.json
-  MultiSchema/bar/d.json
-And the user wants the outputs to be in MultiSchema/Out, then this code will be able to map the inner directories foo, bar, and fuzz into the intended Out directory like so:
-  MultiSchema/Out/foo/a.json
-  MultiSchema/Out/bar/fuzz/c.json
-  MultiSchema/Out/bar/d.json
-*/
-export function pathTransform(outputPath: string, inputPath: string, filePath: string): string {
-  const inPathList = normalize(inputPath).split(sep)
-  const filePathList = dirname(normalize(filePath)).split(sep)
-  const filePathRel = filePathList.filter((f, i) => f !== inPathList[i])
-
-  return join(normalize(outputPath), ...filePathRel)
 }

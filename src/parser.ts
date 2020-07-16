@@ -1,7 +1,5 @@
-import {whiteBright} from 'cli-color'
 import {JSONSchema4Type, JSONSchema4TypeName} from 'json-schema'
 import {findKey, includes, isPlainObject, map} from 'lodash'
-import {format} from 'util'
 import {Options} from './'
 import {typeOfSchema} from './typeOfSchema'
 import {
@@ -83,7 +81,7 @@ function parseNonLiteral(
   processed: Processed,
   usedNames: UsedNames
 ) {
-  log(whiteBright.bgBlue('parser'), schema, '<-' + typeOfSchema(schema), processed.has(schema) ? '(FROM CACHE)' : '')
+  log('parser', schema, '<-' + typeOfSchema(schema), processed.has(schema) ? '(FROM CACHE)' : '')
 
   switch (typeOfSchema(schema)) {
     case 'ALL_OF':
@@ -167,7 +165,7 @@ function parseNonLiteral(
         type: 'UNION'
       })
     case 'REFERENCE':
-      throw Error(format('Refs should have been resolved by the resolver!', schema))
+      throw Error('Refs should have been resolved by the resolver!')
     case 'STRING':
       return set({
         comment: schema.description,
@@ -331,7 +329,7 @@ function newNamedInterface(
     return namedInterface
   }
   // TODO: Generate name if it doesn't have one
-  throw Error(format('Supertype must have standalone name!', namedInterface))
+  throw Error('Supertype must have standalone name!' + namedInterface)
 }
 
 /**

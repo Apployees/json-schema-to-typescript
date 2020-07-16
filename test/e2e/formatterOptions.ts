@@ -16,9 +16,4 @@ export let input = {
 }
 
 export let options: Partial<Options> = {
-  style: {
-    semi: false,
-    trailingComma: 'all',
-    useTabs: true
-  }
 }

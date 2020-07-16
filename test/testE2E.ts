@@ -1,9 +1,9 @@
 import test from 'ava'
 import {readdirSync} from 'fs'
 import {find} from 'lodash'
-import {join} from 'path'
 import {compile, JSONSchema, Options} from '../src'
-import {log, stripExtension} from '../src/utils'
+import {log} from '../src/utils'
+import {extname, join} from 'path'
 
 const dir = __dirname + '/e2e'
 
@@ -52,4 +52,12 @@ function runOne(exports: TestCase, name: string) {
       t.snapshot(await compile(exports.input, stripExtension(name), exports.options))
     }
   })
+}
+
+
+/**
+ * Avoid appending "js" to top-level unnamed schemas
+ */
+export function stripExtension(filename: string): string {
+  return filename.replace(extname(filename), '')
 }
