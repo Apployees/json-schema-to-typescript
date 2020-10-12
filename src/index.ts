@@ -10,6 +10,7 @@ import {error} from './utils'
 import {validate} from './validator'
 
 export {EnumJSONSchema, JSONSchema, NamedEnumJSONSchema, CustomTypeJSONSchema} from './types/JSONSchema'
+export {toSafeString} from "./utils";
 
 export interface Options {
   /**
